@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)http://www.matlus.com/html5-file-upload-with-progress/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Html5 File Upload with Progress On Matlus</title><link href="./Html5 File Upload with Progress On Matlus_files/site.css" rel="stylesheet" type="text/css"><meta name="generator" content="Orion built with Quartz for ASP.NET"><link rel="alternate" type="application/rss+xml" title="Matlus - Internet Technology &amp; Software Engineering" href="http://www.matlus.com/feed/"><link rel="shortcut icon" type="image/x-icon" href="http://www.matlus.com/favicon.ico"><link rel="icon" type="image/vnd.microsoft.icon" href="http://www.matlus.com/favicon.ico"><meta name="description" content="Html5 File Upload with Progress Html5 finally solves an age old problem of being able to upload files while also showing the upload progress. Today mo"><link rel="me" type="text/html" href="https://plus.google.com/117403019425716558488">
+</head>
+<body>  
+  <header><div id="headerContent"><div id="siteName" style="cursor: pointer;">Matlus</div><div class="desc">Internet Technology &amp; Software Engineering</div></div></header>
+  <nav><div id="mainNav"><ul><li><a href="http://www.matlus.com/category/azure/">Azure</a></li><li><a href="http://www.matlus.com/category/html-5/">Html 5</a></li><li><a href="http://www.matlus.com/category/iis/">IIS</a></li><li><a href="http://www.matlus.com/category/jquery/">jQuery</a></li><li><a href="http://www.matlus.com/category/online-video/">Online Video</a></li><li><a href="http://www.matlus.com/category/opinion/">Opinion</a></li><li><a href="http://www.matlus.com/category/programming/">Programming</a></li></ul></div></nav>
+  <div id="content">    
+    <section>
+      <div id="mainContent">
+        <section>  
+    <article class="post">
+        <div class="excerpt">
+        <header>
+            <h1 class="postTitle">Html5 File Upload with Progress</h1>
+            <div class="citation mgntop5">
+              <div id="hcard-Shiv-Kumar" class="vcard">
+              Posted by <a class="url fn" href="http://www.matlus.com/">Shiv Kumar</a> on <time datetime="2010-09-25T01:09:00+00:00">25th September, 2010</time>
+               <span class="title">Senior Software Engineer, Software Architect</span>
+               <div class="adr">
+                <span class="region">VA</span>
+                <span class="country-name">USA</span>
+               </div>
+              </div>              
+              <div>Categorized Under: <a href="http://www.matlus.com/category/html-5/" class="category" rel="tag">Html 5</a>&nbsp;<a href="http://www.matlus.com/category/html-5/file-upload/" class="category" rel="tag">File Upload</a></div>
+              <div>Tagged With: <a href="http://www.matlus.com/tag/file-api/" class="tag" rel="tag">File API</a>&nbsp;<a href="http://www.matlus.com/tag/file-upload/" class="tag" rel="tag">File Upload</a>&nbsp;<a href="http://www.matlus.com/tag/xmlhttprequest/" class="tag" rel="tag">XMLHttpRequest</a>&nbsp;</div>
+                            
+            </div>
+            <div id="share" class="fr">
+              <a class="sharelink" href="https://twitter.com/share?url=http%3a%2f%2fwww.matlus.com%2fhtml5-file-upload-with-progress%2f&text=Html5+File+Upload+with+Progress" rel="nofollow"><img src="./Html5 File Upload with Progress On Matlus_files/twitter.png" title="Share on Twitter" alt="Share on Twitter"></a>
+              <a class="sharelink" href="http://www.facebook.com/sharer.php?u=http%3a%2f%2fwww.matlus.com%2fhtml5-file-upload-with-progress%2f&t=Html5+File+Upload+with+Progress" rel="nofollow"><img src="./Html5 File Upload with Progress On Matlus_files/facebook.png" title="Share on Facebook" alt="Share on Facebook"></a>
+              <a class="sharelink" href="https://plus.google.com/share?url=http%3a%2f%2fwww.matlus.com%2fhtml5-file-upload-with-progress%2f&text=Html5+File+Upload+with+Progress" rel="nofollow"><img src="./Html5 File Upload with Progress On Matlus_files/googleplus.png" title="Recommend on Google" alt="Recommend on Google"></a>
+            </div>
+            <div class="cl"></div>
+        </header>
+        </div>
+        <img src="./Html5 File Upload with Progress On Matlus_files/Html5FileUpload.jpg" alt="Html5 File Upload with Progress" width="640" height="360">
+        <div class="articleText">
+        Html5 finally solves an age old problem of being able to upload files while also showing the upload progress. Today most websites use Flash Player to achieve this functionality. Some websites continue to use the Html <code>&lt;form&gt; with enctype=multipart/form-data,</code> but with modification on the server side to enable showing users the upload progress. Essentially, what you need to do is hook into the server’s byte stream while it is receiving a file so you know how many bytes you’ve received and somehow convey that information back to the client browser, while it is still in the process of uploading the file. This solution works extremely well and is not fraught with the issues Flash Player causes (especially for large files). However it is fairly complicated and not for the faint of heart because you are essentially taking over the entire server side processing (when you tap into the byte stream) and that includes implementing the <code>multipart/form-data</code> protocol on the server side, along with a bunch of other things.  <h2>Uploading files using Html5</h2>The XMLHttpRequest object has gotten a facelift in the Html5 specifications. Specifically the <a href="http://www.w3.org/TR/XMLHttpRequest2/" target="_blank">XMLHttpRequest Level 2</a> specification (currently the latest version) that has included the following new features:  <ol> <li>Handling of byte streams such as File, Blob and FormData objects for uploading and downloading  </li><li>Progress events during uploading and downloading  </li><li>Cross-origin requests  </li><li>Allow making anonymous request - that is not send HTTP Referer  </li><li>The ability to set a Timeout for the Request </li></ol> <p>In this post we’ll look more closely at #1 and #2. In particular, uploading of files using XMLHttpRequest and providing upload progress information to the end-user. Note that this solution <strong>does not require any change to the server side</strong>, at least insofar as handling the multipart/form-data protocol. So existing server side logic should remain unchanged, which makes adapting this technology that much easier. <a name="figure1"></a></p> <p><img style="background-image: none; border-bottom: 0px; border-left: 0px; margin: ; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="Html5FileUpload1" border="0" alt="Html5FileUpload1" src="./Html5 File Upload with Progress On Matlus_files/Html5FileUpload1_6023e7c1-a2a8-43ee-bb13-c2439888adf9.jpg" width="466" height="269">&nbsp;</p> <h3>Figure 1: Showing the File Upload screen -Upload just started</h3> <p>&nbsp;</p><a name="figure2"></a><img style="background-image: none; border-bottom: 0px; border-left: 0px; margin: ; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="Html5FileUpload2" border="0" alt="Html5FileUpload2" src="./Html5 File Upload with Progress On Matlus_files/Html5FileUpload2_f8ce435b-691a-4102-97c4-47cf159436e3.jpg" width="466" height="370">  <h3>Figure 2: Showing the File Upload screen with upload completed.</h3> <div class="mgntop20"></div>Notice in the images above the following pieces of information made available to the user:  <ol> <li>Information on the file that has been selected such as  <ul> <li>File Name  </li><li>File Size  </li><li>Mime Type </li></ul> </li><li>A Progress bar with percent complete  </li><li>The upload speed or upload bandwidth  </li><li>The approximate time remaining  </li><li>The bytes uploaded thus far  </li><li>A response from the server side (the organge box) </li></ol>Item #6 above may not sound important, but in fact is quite important in this context because, remember that the user is not navigating away from this page as she normally would after submitting an html form. Because we're using XMLHttpRequest, the uploading is happening in the background. The page the user is on remains intact. Which is a nice feature to have if your business process can work with it.  <h2>Html5 Progress Event</h2>As per the Html5 <a href="http://www.w3.org/TR/progress-events/" target="_blank&quot;">Progress Events</a> spec, the Html5 progress event provides the following information relevant to this conversation  <ol> <li><code>total</code> - Total bytes being transferred  </li><li><code>loaded</code> - Bytes uploaded thus far  </li><li><code>lengthComputable</code> - Specifies if the total size of the data/file being uploaded is known </li></ol>You should notice that we need to use these two pieces of information to calculate (figure out) all of the other information we're displaying to the user. It is fairly simple to figure out all of the other information given the above two pieces of information but it does involve quite a bit of extra coding and setting up a timer.  <h2>Html5 Progress Event - What it should have been</h2>Considering that those who go down the route of providing upload progress information to the end user will require to show all of the other information to the end user as well, the Html5 Progress Event specifications should have accounted for this need as well, as it would be fairly simple for browser vendors to provide these additional pieces of information each time the progress event is raised. So I propose that the progress event should be modified to the following:  <ol> <li><code>total</code> - Total bytes being transferred  </li><li><code>loaded</code> - Bytes uploaded thus far  </li><li><code>lengthComputable</code> - Specifies if the total size of the data/file being uploaded is known  </li><li><code>transferSpeed</code> as a <code>long</code>  </li><li><code>timeRemaining</code> as a JavaScript <code>Date</code> object </li></ol> <h2>Html5 Upload using XMLHttpRequest</h2>I've provided a <a href="http://exposureroom.biz/upload.aspx" target="_blank">Uploading files using Html5 with Progress indication</a> demo for those who want to jump right to it. All of the JavaScript code required is in the page. However, because the demo is a real world demo there are a number of CSS styles in use, and the layout of the page (the Html) is fairly complex. In this article we work with a minimalistic version of the Html and JavaScript so as to keep things simple and understandable.  <div class="panel"> <h3 class="note">Browser Support for this Feature</h3>At the time of this writing only the following browsers support this feature  <ol> <li>Firefox 4.0 beta 6  </li><li>Chrome 6  </li><li>Safari 5.02 </li></ol>IE 9 Beta and Opera 10.62 do not support this feature </div> <h2>Let's get started</h2>The entire code listing for the minimalistic but functional implementation can be found in <a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing6">Code Listing 6</a>. Each aspect of the minimalistic Html/JavaScript is explained in detail in the rest of this article. Below, is a very simple Html form. This Html is no different then the Html you'd use to do a regular Html/HTTP file upload you'd use today (Html4 and pretty much any previous version of Html). <a name="codeListing1"></a> <div class="panel code content/images/html.png" title="The Html Portion" id="code_92975"><div class="codeHeading" style="background-image: url(/content/images/html.png);"><h3 class="codeTitle">The Html Portion</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>Upload Files using XMLHttpRequest - Minimal<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span><span class="kwrd">&gt;</span>
+  <span class="kwrd">&lt;</span><span class="html">form</span> <span class="attr">id</span><span class="kwrd">="form1"</span> <span class="attr">enctype</span><span class="kwrd">="multipart/form-data"</span> <span class="attr">method</span><span class="kwrd">="post"</span> <span class="attr">action</span><span class="kwrd">="Upload.aspx"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">class</span><span class="kwrd">="row"</span><span class="kwrd">&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">label</span> <span class="attr">for</span><span class="kwrd">="fileToUpload"</span><span class="kwrd">&gt;</span>Select a File to Upload<span class="kwrd">&lt;/</span><span class="html">label</span><span class="kwrd">&gt;&lt;</span><span class="html">br</span> <span class="kwrd">/&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="file"</span> <span class="attr">name</span><span class="kwrd">="fileToUpload"</span> <span class="attr">id</span><span class="kwrd">="fileToUpload"</span> <span class="attr">onchange</span><span class="kwrd">="fileSelected();"</span><span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileName"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileSize"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileType"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">class</span><span class="kwrd">="row"</span><span class="kwrd">&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="button"</span> <span class="attr">onclick</span><span class="kwrd">="uploadFile()"</span> <span class="attr">value</span><span class="kwrd">="Upload"</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="progressNumber"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+  <span class="kwrd">&lt;/</span><span class="html">form</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre></div>
+<h3>Code Listing 1: The bare minimum Html Page</h3>
+<div class="mgntop20"></div>Notice that the <code>&lt;input type="file"/&gt;</code> element has the <code><strong>onchange</strong></code> event assigned to a JavaScript method called <code><strong>fileSelected()</strong></code>. So essentially, each time someone selects a file by browsing to a file on their local system, this event is raised. The <code><strong>fileSelected()</strong></code> JavaScript method looks like the following. <a name="codeListing2"></a>
+<div class="panel code content/images/css.png" title="The fileSelected() JavaScript method" id="code_45682"><div class="codeHeading" style="background-image: url(/content/images/css.png);"><h3 class="codeTitle">The fileSelected() JavaScript method</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode">function fileSelected() {
+  var file = document.getElementById(<span class="str">'fileToUpload'</span>).files[0];
+  <span class="kwrd">if</span> (file) {
+    var fileSize = 0;
+    <span class="kwrd">if</span> (file.size &gt; 1024 * 1024)
+      fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + <span class="str">'MB'</span>;
+    <span class="kwrd">else</span>
+      fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + <span class="str">'KB'</span>;
+          
+    document.getElementById(<span class="str">'fileName'</span>).innerHTML = <span class="str">'Name: '</span> + file.name;
+    document.getElementById(<span class="str">'fileSize'</span>).innerHTML = <span class="str">'Size: '</span> + fileSize;
+    document.getElementById(<span class="str">'fileType'</span>).innerHTML = <span class="str">'Type: '</span> + file.type;
+  }
+}</pre></div>
+<h3>Code Listing 2: The fileSelected() JavaScript method</h3>
+<div class="mgntop20"></div>The first line of code in the method is doing something you've not seen or done before. Essentially, once you have a reference to the <code>&lt;input type="file"/&gt;</code> element, you have access to what is called a <code><strong>FileList</strong></code> object which is new in Html5 and is part of the <a href="http://www.w3.org/TR/FileAPI/" target="_blank">File API</a> specifications of Html 5. A <code>FileList</code> object is a collection of files. More specifically, it is a collection of <code><strong>File</strong></code> objects. A <code>File</code> object has the following properties. 
+<ol>
+<li><code>name</code> - The name of the file (excluding any path) 
+</li><li><code>type</code> - The MIME type of the file (in lower case) 
+</li><li><code>size</code> - The size of the file in bytes </li></ol>This is already getting interesting isn't it? We have access to this information on the client side! In fact the File API gives us access to the contents of the file (the file stream or bytes) on the client side too, using the <code><strong>FileReader</strong></code> object. We won't be dealing with the <code>FileReader</code> in this example, so I'm not going to overwhelm you with yet another new object. We have a couple of new objects to discuss yet. You could use the information the <code>File</code> object provides you to say, prevent users from uploading files larger than the certain size. Or you could use the <code>type</code> property (MIME type) to figure out the type of file the user is attempting to upload and change the behavior of your form (on the client side of course). The above JavaScript method populates the grey box with grey text (in <a href="http://www.matlus.com/html5-file-upload-with-progress/#figure2">Figures 1 &amp; 2</a> above) with the information the <code>File</code> object provides us about the selected file. The file size is in bytes, so there is logic in the method to convert the size into a human readable form, such as 15.65MB instead of 15795748864 bytes. After the user has selected a file she'll want to upload the file and so she's going to click on the <strong>Upload</strong> button. Notice in the code listing for the Html form (<a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing1">Code Listing 1</a>) that the Upload button has its <code>onclick</code> event assigned to the <code><strong>uploadFile()</strong></code> JavaScript method. <a name="codeListing3"></a>
+<div class="panel code content/images/javascript.png" title="uploadFile() JavaScript method" id="code_67759"><div class="codeHeading" style="background-image: url(/content/images/javascript.png);"><h3 class="codeTitle">uploadFile() JavaScript method</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode">function uploadFile() {
+  var xhr = <span class="kwrd">new</span> XMLHttpRequest();
+  var fd = document.getElementById(<span class="str">'form1'</span>).getFormData();
+
+  <span class="rem">/* event listners */</span>
+  xhr.upload.addEventListener(<span class="str">"progress"</span>, uploadProgress, <span class="kwrd">false</span>);
+  xhr.addEventListener(<span class="str">"load"</span>, uploadComplete, <span class="kwrd">false</span>);
+  xhr.addEventListener(<span class="str">"error"</span>, uploadFailed, <span class="kwrd">false</span>);
+  xhr.addEventListener(<span class="str">"abort"</span>, uploadCanceled, <span class="kwrd">false</span>);
+  <span class="rem">/* Be sure to change the url below to the url of your upload server side script */</span>
+  xhr.open(<span class="str">"POST"</span>, <span class="str">"UploadMinimal.aspx"</span>);
+  xhr.send(fd);
+}</pre></div>
+<h3>Code Listing 3: The uploadFile() JavaScript method</h3>
+<div class="mgntop20"></div>In the second line of this method you'll see another object (<code><a href="http://www.w3.org/TR/2010/WD-XMLHttpRequest2-20100907/#the-formdata-interface" target="_blank">FormData</a></code>) that we've never seen nor used before. You're not really seeing it, but we do get a reference to it using the <code><strong>getFormData()</strong></code> method of the <code>&lt;form&gt;</code> element. A <code>FormData</code> object is similar to a dictionary, a collection of name/value pairs. Where the name part is the name of a form field (as defined in the Html page) and the value is the value of this field. The value part can be a string, number or even a <code>File</code> object, as you can see in <a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing4">Code listing 4</a>. So when you call the <code>getFormData()</code> method on the form you get a reference to a FormData object that holds a collection of name/value pairs of that form. You can use this reference as the information you want to send to the server side script. This makes it really simple to submit the entire form. Now you could create an instance of a <code>FormData</code> object manually and send that to the server or you could add additional information to the <code>FormData</code> before sending it to the server side script. 
+<div class="panel">
+<h3>A note about FormData</h3>Note that as if this writing Chrome 6 supports uploading files using the new API but does not support the <code>getFormDate()</code> method. It does however, support the <code>FormData</code> object. So the full code listing of the bare minimal code in <a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing6">Code Listing 6</a> manually creates a <code>FormData</code> instance as discussed below. Another way to instantiate an instance of FormData is to pass in a reference to a form element. like so: <code>var fd = new FormData(document.getElementById('form1')); </code>This constructor has the advantage of populating the <code>FormData</code> instance with all the form's fields, instead of having to do it manually (similar to the <code>getFormData</code> method of the form element discussed earlier. At the time of this writing, on Firefox supports this method. </div><a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing4">Code listing 4</a>, below shows you an example of how you would create an instance of a <code>FormData</code> object, assign some arbitrary fields and their values, including a reference to a <code>File</code> object (the file selected by the user using the <code>&lt;&amp;tl;file type="file"&gt;</code> element. 
+<div class="mgntop20"></div><a name="codeListing4"></a>
+<div class="panel code content/images/javascript.png" title="Manually Creating a FormData object" id="code_20041"><div class="codeHeading" style="background-image: url(/content/images/javascript.png);"><h3 class="codeTitle">Manually Creating a FormData object</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode">var fd = <span class="kwrd">new</span> FormData();
+fd.append(<span class="str">"author"</span>, <span class="str">"Shiv Kumar"</span>);
+fd.append(<span class="str">"name"</span>, <span class="str">"Html 5 File API/FormData"</span>);
+fd.append(<span class="str">"fileToUpload"</span>, document.getElementById(<span class="str">'fileToUpload'</span>).files[0]);</pre></div>
+<h3>Code Listing 4: Manually creating a FormData instance</h3>
+<div class="mgntop20"></div>Going back to <a href="http://www.matlus.com/html5-file-upload-with-progress/#codeListing3">Code Listing 3</a>, you'll notice we've subscribed to a few events of the XMLHttpRequest object. In particular, pay attention to the first line after the event listners comment in the code. <code>xhr.<strong>upload</strong>.addEventListener("progress", uploadProgress, false);</code> The progress event we subscribe to is not that of the XMLHttpRequest instance, but rather the <code><strong>upload</strong></code> property of the XMLHttpRequest instance, which is an <a href="http://dev.w3.org/2006/webapi/XMLHttpRequest-2/#xmlhttprequestupload" target="_blank">XMLHttpRequestUpload</a> type that is really an event target that has a <code><strong>progress</strong></code> event we can subscribe to in order to get progress information on the upload that is taking place. We don't have to worry about this object. Just remember, when using XMLHttpRequest for uploading data to the server, you must subscribe to its <code><strong>upload</strong></code> property's <code><strong>progress</strong></code> event. 
+<div class="mgntop20"></div>
+<div class="panel">
+<h3>A note about Progress Events</h3>The XMLHttpRequest object does have a progress event of it's own and you'll subscribe to that event when you download data from the server (which we are not covering here). </div><a name="codeListing5"></a>
+<div class="panel code content/images/javascript.png" title="The Event handler implementations" id="code_55953"><div class="codeHeading" style="background-image: url(/content/images/javascript.png);"><h3 class="codeTitle">The Event handler implementations</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode">function uploadProgress(evt) {
+  <span class="kwrd">if</span> (evt.lengthComputable) {
+    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+    document.getElementById(<span class="str">'progressNumber'</span>).innerHTML = percentComplete.toString() + <span class="str">'%'</span>;
+  }
+  <span class="kwrd">else</span> {
+    document.getElementById(<span class="str">'progressNumber'</span>).innerHTML = <span class="str">'unable to compute'</span>;
+  }
+}
+
+function uploadComplete(evt) {
+  <span class="rem">/* This event is raised when the server send back a response */</span>
+  alert(evt.target.responseText);
+}
+
+function uploadFailed(evt) {
+  alert(<span class="str">"There was an error attempting to upload the file."</span>);
+}
+
+function uploadCanceled(evt) {
+  alert(<span class="str">"The upload has been canceled by the user or the browser dropped the connection."</span>);
+}  
+</pre></div>
+<h3>Code Listing 5: The implementation of the various event handlers</h3>
+<div class="mgntop20"></div>The code listing above is pretty self explanatory so there is nothing much to say here. 
+<h2>The Minimalistic Solution</h2>The Code listing below is the entire Html page including the JavaScript and Html required to get a bear minimum File upload with progress indicator working. I've intentionally kept it simple so if you want to do your own layout and information display you can start with this and expand it. Html5 also introduces a <code><b>progress</b></code> element that can be used to show progress. The <code>progress</code> element has <code>max</code> and <code>value</code> and so it makes it really simple to show progress. However, at the time of this writing, only Chrome 6 supports this element so I've not used it in the minimalistic solution. 
+<div class="panel">
+<h3 class="note">Change the Url to the server side script</h3>Be sure to change the url to point to the url of your server side script that handles file uploads. In the code listing below, it is <b>UploadMinimal.aspx</b> in the <code>uploadFile()</code> method: <code><b>xhr.open("POST", "UploadMinimal.aspx");</b></code> </div><a name="codeListing6"></a>
+<div class="panel code content/images/html.png" title="Minimalistic Html and JavaScript" id="code_28252"><div class="codeHeading" style="background-image: url(/content/images/html.png);"><h3 class="codeTitle">Minimalistic Html and JavaScript</h3><div class="expand" title="Expand Code Listing"></div><div class="clear"></div></div><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>Upload Files using XMLHttpRequest - Minimal<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span><span class="kwrd">&gt;</span>
+      <span class="kwrd">function</span> fileSelected() {
+        <span class="kwrd">var</span> file = document.getElementById(<span class="str">'fileToUpload'</span>).files[0];
+        <span class="kwrd">if</span> (file) {
+          <span class="kwrd">var</span> fileSize = 0;
+          <span class="kwrd">if</span> (file.size &gt; 1024 * 1024)
+            fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + <span class="str">'MB'</span>;
+          <span class="kwrd">else</span>
+            fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + <span class="str">'KB'</span>;
+
+          document.getElementById(<span class="str">'fileName'</span>).innerHTML = <span class="str">'Name: '</span> + file.name;
+          document.getElementById(<span class="str">'fileSize'</span>).innerHTML = <span class="str">'Size: '</span> + fileSize;
+          document.getElementById(<span class="str">'fileType'</span>).innerHTML = <span class="str">'Type: '</span> + file.type;
+        }
+      }
+
+      <span class="kwrd">function</span> uploadFile() {
+        <span class="kwrd">var</span> fd = <span class="kwrd">new</span> FormData();
+        fd.append(<span class="str">"fileToUpload"</span>, document.getElementById(<span class="str">'fileToUpload'</span>).files[0]);
+        <span class="kwrd">var</span> xhr = <span class="kwrd">new</span> XMLHttpRequest();
+        xhr.upload.addEventListener(<span class="str">"progress"</span>, uploadProgress, <span class="kwrd">false</span>);
+        xhr.addEventListener(<span class="str">"load"</span>, uploadComplete, <span class="kwrd">false</span>);
+        xhr.addEventListener(<span class="str">"error"</span>, uploadFailed, <span class="kwrd">false</span>);
+        xhr.addEventListener(<span class="str">"abort"</span>, uploadCanceled, <span class="kwrd">false</span>);
+        xhr.open(<span class="str">"POST"</span>, <span class="str">"UploadMinimal.aspx"</span>);
+        xhr.send(fd);
+      }
+
+      <span class="kwrd">function</span> uploadProgress(evt) {
+        <span class="kwrd">if</span> (evt.lengthComputable) {
+          <span class="kwrd">var</span> percentComplete = Math.round(evt.loaded * 100 / evt.total);
+          document.getElementById(<span class="str">'progressNumber'</span>).innerHTML = percentComplete.toString() + <span class="str">'%'</span>;
+        }
+        <span class="kwrd">else</span> {
+          document.getElementById(<span class="str">'progressNumber'</span>).innerHTML = <span class="str">'unable to compute'</span>;
+        }
+      }
+
+      <span class="kwrd">function</span> uploadComplete(evt) {
+        <span class="rem">/* This event is raised when the server send back a response */</span>
+        alert(evt.target.responseText);
+      }
+
+      <span class="kwrd">function</span> uploadFailed(evt) {
+        alert(<span class="str">"There was an error attempting to upload the file."</span>);
+      }
+
+      <span class="kwrd">function</span> uploadCanceled(evt) {
+        alert(<span class="str">"The upload has been canceled by the user or the browser dropped the connection."</span>);
+      }
+    <span class="kwrd">&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span><span class="kwrd">&gt;</span>
+  <span class="kwrd">&lt;</span><span class="html">form</span> <span class="attr">id</span><span class="kwrd">="form1"</span> <span class="attr">enctype</span><span class="kwrd">="multipart/form-data"</span> <span class="attr">method</span><span class="kwrd">="post"</span> <span class="attr">action</span><span class="kwrd">="Upload.aspx"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">class</span><span class="kwrd">="row"</span><span class="kwrd">&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">label</span> <span class="attr">for</span><span class="kwrd">="fileToUpload"</span><span class="kwrd">&gt;</span>Select a File to Upload<span class="kwrd">&lt;/</span><span class="html">label</span><span class="kwrd">&gt;&lt;</span><span class="html">br</span> <span class="kwrd">/&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="file"</span> <span class="attr">name</span><span class="kwrd">="fileToUpload"</span> <span class="attr">id</span><span class="kwrd">="fileToUpload"</span> <span class="attr">onchange</span><span class="kwrd">="fileSelected();"</span><span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileName"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileSize"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="fileType"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">class</span><span class="kwrd">="row"</span><span class="kwrd">&gt;</span>
+      <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="button"</span> <span class="attr">onclick</span><span class="kwrd">="uploadFile()"</span> <span class="attr">value</span><span class="kwrd">="Upload"</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">id</span><span class="kwrd">="progressNumber"</span><span class="kwrd">&gt;&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+  <span class="kwrd">&lt;/</span><span class="html">form</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre></div>
+<h3>Code Listing 6: The Complete but minimalistic code listing</h3>Well, that pretty much covers the minimalistic version of the new Html5 feature. Getting at the other information that you see in <a href="http://www.matlus.com/html5-file-upload-with-progress/#figure2">Figure2</a> is mathematical really. It is quite a bit of extra work to not only get at the information, but to display and animate etc. For instance to get the rate of upload (the upload speed). We do the following: 1. in the <code>uploadProgress(evt)</code> event, should store the <code>evt.loaded</code> and <code>evt.total</code> in global variables. 2. We set up a timer event to fire every second. 3. In the timer callback we get the difference of the number of bytes transfered between now and the last time the callback was called (so 1 second ago). 4. That gives us the number of bytes per second. Which is the upload speed. Note that in the demo I set up the timer to fire every 500 milliseconds to get more granularity. As a result the difference between the number of bytes is doubled since the number of bytes is really the number of bytes transferred in half a second. I won't go into how to find the time remaining, but it's all there in the demo. Do a "view source" to see the code in the demo's html page. I hope you found this article helpful.
+
+
+  
+        </div>
+        <footer></footer>
+        <aside id="comments">
+<a name="comments"><h4 class="commentHeader">Comments</h4></a>
+<div class="panel">  
+  <div><a href="http://kadsite.com/upload_files.php" class="url fn" style="_blank">Kent Davis</a> <time class="fr citation" datetime="2011-01-26T14:08:47+00:00">26th January, 2011</time></div>
+  <div class="commentItem">
+  I am tried upload there is fail and I don't understand.<br>Would you like send me new file and I can work on script solve problem?
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-01-26T14:57:30+00:00">26th January, 2011</time></div>
+  <div class="commentItem">
+  Kent,<br>Did you try uploading using the demo at <a href="http://exposureroom.biz/upload.aspx">Uploading files using Html5 with Progress indication</a>?<br><br>Also make sure you're using a browser that supports this feature.<br><br>What error do you see? If you need the script, you can simply do a view source on the demo page and take the complete script from there.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://kadsite.com/upload_files.php" class="url fn" style="_blank">Kent Davis</a> <time class="fr citation" datetime="2011-01-28T00:19:45+00:00">28th January, 2011</time></div>
+  <div class="commentItem">
+  Hi there<br><br>Yes. I use Safari 5.0.3. Since I am not familiar with .aspx. I use php.<br><br>I changed the path from <br><br><br>I copy all of your codes in "Upload.php". <br><br>What is it that I am missing? Can I use PHP? and also I am using GoDaddy.<br><br>Thanks<br>Kent
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-01-28T01:19:26+00:00">28th January, 2011</time></div>
+  <div class="commentItem">
+  Hi Kent, well the issue is that on the PHP side you need to support the multipart/form-data protocol. This is typically when receiving large uploaded files on the server side.<br><br>By default when you submit a form the browser uses application/x-www-form-urlencoded protocol (or the enctype attribute of the html &gt;form&lt; tag. <br><br>Now for small files (smaller than 48K) you can change the enctype attribute of the form or remove it entirely and you php side should work. But for large files, your php side will need to support the multipart/form-data protocol. And yes, php does support this, so there is a way to do it, but I'm not a php person so I can't help you there.<br><br>Nonetheless, your issue is a server side (php in this case) related issue and not a html 5 or browser related issue.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://kadsite.com/upload_files.php" class="url fn" style="_blank">Kent Davis</a> <time class="fr citation" datetime="2011-01-28T10:24:28+00:00">28th January, 2011</time></div>
+  <div class="commentItem">
+  Would you like fix for HTML and/or PHP and send me file document (Upload file) something?<br>mac4kent@gmail.com
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-01-28T17:43:40+00:00">28th January, 2011</time></div>
+  <div class="commentItem">
+  Kent,<br><br>It's not something that needs to be fixed on the client side. Your php code needs to be "fixed". That it is need to account for multipart/form-data.<br><br>A regular php file upload script (that handles multipart/form-data will work. For example, take a look at this<br><a href="http://www.tizag.com/phpT/fileupload.php">php - file upload</a>
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://kadsite.com/upload_files.php" class="url fn" style="_blank">Kent Davis</a> <time class="fr citation" datetime="2011-01-28T21:39:43+00:00">28th January, 2011</time></div>
+  <div class="commentItem">
+  Sigh I can't find download simply script for upload.<br>not matter support on script for html.<br>I need get document complete and easy to click upload file.<br>
+  </div>
+</div>
+<div class="panel">  
+  <div>Eric P <time class="fr citation" datetime="2011-02-03T09:56:51+00:00">3rd February, 2011</time></div>
+  <div class="commentItem">
+  Great article...and very well written! Thanks for sharing. I'm especially impressed with the simplicity of your coding example. It's a positive that you are only referencing "Upload.aspx" and not getting into the server side processing part, because that has nothing to do with the scope of HTML5 functionality.<br><br>Anyway, I would love to see you expand the article/example to include cross site requests( https://wiki.mozilla.org/Cross_Site_XMLHttpRequest). I'm working on an app that submits to another website which I don't have control of the code (other than the ability to post uploads, and put content ... including a crossdomain.xml file).<br><br>Also, while I'm making requests :), I would also like to see your code interpretation of a clean interface for selecting and uploading multiple files, utilizing the HTML5 multiple file input functionality.<br><br>Keep up the great work!
+  </div>
+</div>
+<div class="panel">  
+  <div>Easton Harvey <time class="fr citation" datetime="2011-02-17T16:57:32+00:00">17th February, 2011</time></div>
+  <div class="commentItem">
+  One other suggestion I would make would be to move the:<br><br>var uploadResponse = document.getElementById('uploadResponse');<br>            uploadResponse.innerHTML = '<span style="font-size: 18pt; font-weight: bold;">Please wait...</span>';<br>            uploadResponse.style.display = 'block';<br><br>Up to right after the submit post aka:<br><br>intervalTimer = setInterval(updateTransferSpeed, 500);<br><br>Otherwise it doesn't get fired.<br><br>Like Eric, I would love to see any implementation you may have for multi files.<br><br>Thank you and keep it up!<br>
+  </div>
+</div>
+<div class="panel">  
+  <div>Easton Harvey <time class="fr citation" datetime="2011-02-17T17:03:53+00:00">17th February, 2011</time></div>
+  <div class="commentItem">
+  I love what you've done. Thank you for sharing.<br><br>For those reading this, a easy ASP.NET codebehind implementation would be to post to a Generic Hander:<br><br>public void ProcessRequest (HttpContext context) {<br><br>    //Capture File From Post<br>    HttpPostedFile file = context.Request.Files["fileToUpload"];<br><br>    //Optional: Convert to File to binary if you need to forward it to a video encoding service like Panda Stream<br>    //BinaryReader b = new BinaryReader(file.InputStream);<br>    //byte[] binData = b.ReadBytes(file.ContentLength);<br>        b.Close();<br><br>    //Or just save it locally<br>    file.SaveAs("dir");<br><br><br>    string result = "File Saved Successfully";<br>        <br>    context.Response.ContentType = "text/plain";<br>    context.Response.Write(result);<br>}<br><br>Ask me if you have any questions :)
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-02-17T17:59:10+00:00">17th February, 2011</time></div>
+  <div class="commentItem">
+  Hey Easton, can you explain what you mean by "Otherwise it doesn't get fired." in your first comment? I'm not sure I understand what you mean by that.<br><br>The uploadResponse div is used to show the response from the server after the file has been received so putting it right after setInterval doesn't make sense since that would make it visible as soon as you start uploading.<br><br>Have you tried the demo app (http://exposureroom.biz/upload.aspx), if so, do you see this behavior there?
+  </div>
+</div>
+<div class="panel">  
+  <div>Easton Harvey <time class="fr citation" datetime="2011-02-19T18:30:36+00:00">19th February, 2011</time></div>
+  <div class="commentItem">
+  Shiv,<br>I understand what you are doing, however what I am trying to explain is that the "Please Wait" is never shown/seen. I just moved it up to where i described and it works great :)<br>
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-02-21T14:51:18+00:00">21st February, 2011</time></div>
+  <div class="commentItem">
+  Easton, I see. I'll take a look at it once again. Thanks for the heads up.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.englishediting.ch/" class="url fn" style="_blank">Rupert Paget</a> <time class="fr citation" datetime="2011-06-28T15:20:41+00:00">28th June, 2011</time></div>
+  <div class="commentItem">
+  Hi,<br>I tested quite a few methods for uploading files, and each had their drawbacks. In the end I chose yours, as I thought it was definitely the best. Worked brilliantly. I just had to delete the line:<br><br>document.getElementById('progressInfo').style.display = 'none';<br><br>as the element progressInfo did not exist. Then I get the "Please Wait" message.<br><br>Thanks
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.kevinuk.co.uk/" class="url fn" style="_blank">Kevin UK</a> <time class="fr citation" datetime="2011-07-11T10:48:22+00:00">11th July, 2011</time></div>
+  <div class="commentItem">
+  Hi,<br>Is there any fallback code to support IE (as in just submit the form and not worrying about displaying a progress bar?)<br><br>Also when I try the line:<br>var fd = document.getElementById('form1').getFormData();<br><br>Then I get the error message:<br>Uncaught TypeError: Object #
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-07-11T11:48:36+00:00">11th July, 2011</time></div>
+  <div class="commentItem">
+  Kevin,<br><br>Feel free to code you own fallback route. It defeates the purpose of this post since this post is about Html 5 file upload with progress.<br><br>As regards the error, please make sure your browser support Html 5 File Upload.<br><br>Use the test site with your browser. IF it doesn't work then your browser is the problem.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.emeraldfeathers.com/" class="url fn" style="_blank">Mayur Prajapati</a> <time class="fr citation" datetime="2011-07-13T20:32:15+00:00">13th July, 2011</time></div>
+  <div class="commentItem">
+  Can this script handle uploading multiple files? Can I just append "multiple" to the input tag?
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.mysite.com/" class="url fn" style="_blank">Nikhil Verma</a> <time class="fr citation" datetime="2011-07-14T04:37:44+00:00">14th July, 2011</time></div>
+  <div class="commentItem">
+  Shiv,<br><br>u showed a nice example using HTML5 specs, but i just have one question as i am developing in php and not aspx, do i need to change the file name to abc.php in the XHR.open() statement. Will that solve the purpose? Please help.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-07-14T07:31:50+00:00">14th July, 2011</time></div>
+  <div class="commentItem">
+  Nikhil,<br><br>Yes, if your PHP page is abc.php, then yes. However, make sure your php page canactually handle a File Upload (there is special code required on the server side to do that, you need to support the multipart/form-data protocol. This is typically when receiving large uploaded files on the server side.<br>).<br><br>Please take a look at my answers to Kent Davis above.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-07-14T07:50:28+00:00">14th July, 2011</time></div>
+  <div class="commentItem">
+  Mayur,<br><br>There will be two things that will need to be adjusted. The first is of course the "multiple" attrubute for the file input tag as you mentioned. Now if you're trying to access these files (their names etc.) on the client side you'll need to iterate over the "files" collection on the input element.<br><br>Something like:<br>for (var i = 0; i <br>    // input.files[i] is a file object<br>}<br><br>The variable "file" is input element as per the example code above.<br><br>If your server side is php, I believe you need to name the input element (in the Html side) such that it has brackets like so:<br><br>name="fileToUpload[]"<br><br>instead of what we have now<br><br>name="fileToUpload"<br><br>
+  </div>
+</div>
+<div class="panel">  
+  <div>Jose Calderon <time class="fr citation" datetime="2011-07-14T14:10:45+00:00">14th July, 2011</time></div>
+  <div class="commentItem">
+  Thank you Easton Harvey.<br><br>Good Stuff.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://blog.schemacs.com/" class="url fn" style="_blank">lele long</a> <time class="fr citation" datetime="2011-07-25T20:34:05+00:00">25th July, 2011</time></div>
+  <div class="commentItem">
+  Firefox 4 change the getFormData API(see https://github.com/lento/spam/issues/18#issuecomment-934575),so alter the code to this:<br><br>var fd = new FormData(document.getElementById('revisioned_form'));
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-07-26T08:15:43+00:00">26th July, 2011</time></div>
+  <div class="commentItem">
+  Lele,<br><br>This use of FormData instead of the method getFormData() method has already been mentioned in the note: A note about FormData under code listing 3
+  </div>
+</div>
+<div class="panel">  
+  <div>Igor Alves <time class="fr citation" datetime="2011-08-21T17:01:12+00:00">21st August, 2011</time></div>
+  <div class="commentItem">
+  Hi,<br>first of all, it is a good code thks for share.<br>I have a question about that.<br>I have a function says blah() that id like to call after upload is completed.<br>I didnt find the exact place where i should put the function. I've tried after progress bar if (percentComplete == 100) {..}. But doens work.<br>What should i do?  tnks 
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-08-24T15:39:45+00:00">24th August, 2011</time></div>
+  <div class="commentItem">
+  Hi Igor,<br><br>In Code list 6 above, the method "uploadComplete" has been tied to the "load" event. So you could call your method from within the uploadComplete method to get the behavior you want.
+  </div>
+</div>
+<div class="panel">  
+  <div>Mithun MOhan <time class="fr citation" datetime="2011-10-20T07:49:42+00:00">20th October, 2011</time></div>
+  <div class="commentItem">
+  Hi Shiv,<br><br>Nice tutorial . How do i cancel the upload .Could you share your points.<br><br>Thanks
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-10-20T08:28:33+00:00">20th October, 2011</time></div>
+  <div class="commentItem">
+  Hi Mithun,<br><br>the xhr.upload (as per code listing 3 and 6 above) is really an instance of type XMLHttpRequestUpload. This class has an abort() method that you can call to abort (or cancel) the upload.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.grindheadgames.com/" class="url fn" style="_blank">craig beswetherick</a> <time class="fr citation" datetime="2011-11-14T06:27:17+00:00">14th November, 2011</time></div>
+  <div class="commentItem">
+  Hi there - good article, I will be using this in future!<br><br>I would like to ask what problems you can experience loading large files using Flash however. Just sounds like poor coding blamed on the tech to me :-)<br><br>However great work - thanks! 
+  </div>
+</div>
+<div class="panel">  
+  <div>Dripple D. <time class="fr citation" datetime="2011-11-14T06:39:08+00:00">14th November, 2011</time></div>
+  <div class="commentItem">
+  Hi,<br><br>Is there a way to manage throughput the same way ? <br><br>Thanks.<br><br>Dripple
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-11-14T08:48:07+00:00">14th November, 2011</time></div>
+  <div class="commentItem">
+  Hi Craig,<br><br>There are quite a few problems one encounters with uploading large files with Flash. In fact I have logged a few bugs with Adobe myself as we used to use Flash for uploading large video files at http://exposureroom.com. We've since moved to using pure Html with our own progress indication mechanism that works flawlessly.<br><br>I'm afraid I don't remember the details anymore but the kinds of problems our users encountered were really hard to track and figure out. Finally, you always got only one error code (no matter what the issue was) from the Flash player and that wasn't helpful either. Long story short, it was too much of a headache to continue to use/support and Adobe kept deffering fixing the bugs to next release which never materialized.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-11-14T08:52:49+00:00">14th November, 2011</time></div>
+  <div class="commentItem">
+  Dripple,<br><br>Any throughput related issues can/should be managed on the server side.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://yobif.com/" class="url fn" style="_blank">Vinoth Kumar</a> <time class="fr citation" datetime="2011-11-16T01:34:44+00:00">16th November, 2011</time></div>
+  <div class="commentItem">
+  Thanks for sharing a nice script. :)
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.dieupdater.de/" class="url fn" style="_blank">John Agricola</a> <time class="fr citation" datetime="2011-11-20T18:42:27+00:00">20th November, 2011</time></div>
+  <div class="commentItem">
+  Excellent Stuff but hard to understand at the beginning ;)
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.erecepti.com/" class="url fn" style="_blank">Srdjan Radic</a> <time class="fr citation" datetime="2011-11-24T18:49:44+00:00">24th November, 2011</time></div>
+  <div class="commentItem">
+  This is great way to improve my image upload form. <br>Thanks.
+  </div>
+</div>
+<div class="panel">  
+  <div>Kshyhoo   <time class="fr citation" datetime="2011-12-10T14:13:43+00:00">10th December, 2011</time></div>
+  <div class="commentItem">
+  Would like to subscribe this website with RSS :)
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2011-12-12T07:46:19+00:00">12th December, 2011</time></div>
+  <div class="commentItem">
+  Kshyhoo,<br><br>The url for the RSS Feed is:<br>http://www.matlus.com/feed/<br>
+  </div>
+</div>
+<div class="panel">  
+  <div>Vishal Hatiskar <time class="fr citation" datetime="2012-01-17T04:10:25+00:00">17th January, 2012</time></div>
+  <div class="commentItem">
+  hii Shiv Kumar this is great artical...but why the progress event is not working in mozilla firefox 9.0.1 browser which is latest...i tried above demo also it is not working as no progress bar is shown..so what is solution for that...thank you...
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2012-01-17T08:09:22+00:00">17th January, 2012</time></div>
+  <div class="commentItem">
+  Vishal, I just tested my sample website (link in the article) using Firefox 9.0.1 and it works as expected.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.jibinmathew.wordpress.com/" class="url fn" style="_blank">jibin mathew</a> <time class="fr citation" datetime="2012-02-15T06:03:03+00:00">15th February, 2012</time></div>
+  <div class="commentItem">
+  How can i read the json Data returned form the server for the POST method on the uploadComplete function and display contents in the Json data (satus, ImageUrl etc)
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2012-02-15T08:06:31+00:00">15th February, 2012</time></div>
+  <div class="commentItem">
+  Jibin,<br><br>Take a look at the uploadComplete event in code listing 6 above. The evt parameter contains the response. More specifically, evt.target.responseText contains the response from the server. This response could be in any format such as xml, JSON or just plain text).<br><br>You could also tap into evt.target.responseType which is the MIME type of the response and act accordingly. That is, if the responseType is "json" then you could use the JSON object's (defined in ECMAScript) parse function to retrieve the JSON returned by the server.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://buffernow.com/" class="url fn" style="_blank">Rohit Chowdhary</a> <time class="fr citation" datetime="2012-02-19T08:06:02+00:00">19th February, 2012</time></div>
+  <div class="commentItem">
+  Hi Shiv<br>Thank For This Article<br>integrated on joomla+virtuemart successfully<br>you saved my day<br>hope it works on IE
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="https://sites.google.com/site/sandyadav080/" class="url fn" style="_blank">sandy yadav</a> <time class="fr citation" datetime="2012-02-27T03:30:45+00:00">27th February, 2012</time></div>
+  <div class="commentItem">
+  Hi Shiv,<br>i tried your demo and seems like it works accurately only on bmp files, for jpg's it's instantly shows 100% in chrome and not showing any progress in firefox, any ideas?
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2012-02-27T08:00:03+00:00">27th February, 2012</time></div>
+  <div class="commentItem">
+  Sandy,<br>Have you tried the test site I provide (link is in the article above)? Jpg files are generally smaller than bmp files and I think what is happening with you is that it takes no time to upload the jpeg file as compared to the bmp file and that's proably why you think it doesn't work for jpeg files.<br><br>It works just fine for me (test it against the test site) no matter what file I upload.
+  </div>
+</div>
+<div class="panel">  
+  <div>Gurame Rame <time class="fr citation" datetime="2012-02-28T09:38:53+00:00">28th February, 2012</time></div>
+  <div class="commentItem">
+  Well done. I tried the upload test link too.<br>Works great.<br>Thank's for sharing.
+  </div>
+</div>
+<div class="panel">  
+  <div>Rafal Karczewski <time class="fr citation" datetime="2012-03-14T12:30:08+00:00">14th March, 2012</time></div>
+  <div class="commentItem">
+  Shiv,<br>Great article, very helpful. <br>Thanks !
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.umairp.com/" class="url fn" style="_blank">Umair Peracha</a> <time class="fr citation" datetime="2012-03-16T06:22:01+00:00">16th March, 2012</time></div>
+  <div class="commentItem">
+  hi, <br>I have tried this example and it works like a charm. I am using ASP.NET MVC 3 at the server end and files smaller than 20 MB are being uploaded but as I try to upload a larger file the java script throws and error "There was an error attempting to upload the file". The server side code never gets hit. Any idea why this is happening? 
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.matlus.com/" class="url fn" style="_blank">Shiv Kumar</a> <time class="fr citation" datetime="2012-03-16T07:56:03+00:00">16th March, 2012</time></div>
+  <div class="commentItem">
+  Umair,<br>This is an ASP.NET set up specific problem I believe. Have you modified any web.config or applicationHost.config file settings related to request length? If not, you'll need to make some modifications.<br><br>In your web.config you'll need to set the maxRequestLength to a large number (The size is in Kb)<br><a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.httpruntimesection.maxrequestlength.aspx">HttpRuntimeSection.MaxRequestLength Property</a>.<br><br>You'll also need to set the maxAllowedContentLength attribute of the requestFiltering.requestLimits node under system.webserver (IIS 7 and above will neede this). However, before you can do that (and make it work), you'll need to modify the applicationHost.config file on your %windir%\System32\inetsrv\config folder.<br><br>Take a look at this forum thread<br><a href="http://forums.iis.net/p/1066272/1543441.aspx">Changing maxAllowedContentLength</a>
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.kingwilder.com/" class="url fn" style="_blank">King Wilder</a> <time class="fr citation" datetime="2012-03-26T18:31:31+00:00">26th March, 2012</time></div>
+  <div class="commentItem">
+  You saved me! I was using the Telerik for MVC Extensions and while they work, I had files well over 100MB to upload and they just wouldn't work with files that large.<br><br>I just changed the maxRequestLength value to 1024000, and the requestLimits maxAllowedContentLength to 1024000000.<br><br>Great job!
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.rylowry.com/" class="url fn" style="_blank">Ry Lowry</a> <time class="fr citation" datetime="2012-03-31T05:46:32+00:00">31st March, 2012</time></div>
+  <div class="commentItem">
+  This demo helped me get started with HTML5 drag/drop file uploads, but now I'm stumped on something new.  Is it possible to drag and drop files into a form, and then perform a typical form submission?  Basically, I want to drag and drop files into a form, and then submit the files without any ajax. Is it possible to append files from a FileList to an existing form, or is it only possible to create a new FormData object, and submit it with an XMLHttpRequest?
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://www.hasroh.co.uk/" class="url fn" style="_blank">Harry Hamill</a> <time class="fr citation" datetime="2013-01-21T10:25:32+00:00">21st January, 2013</time></div>
+  <div class="commentItem">
+  This is excellent. Furthermore in following what was going on here I think now have a lot more understanding of the uploading process. Thanks!
+  </div>
+</div>
+<div class="panel">  
+  <div>Lee Blevins <time class="fr citation" datetime="2013-06-15T14:43:04+00:00">15th June, 2013</time></div>
+  <div class="commentItem">
+  I've read a lot of code examples and tutorials on the internet and this is without a doubt, the best written one I've seen. The key to the success of this one is the "keep it simple" idea and the quality of the writing.<br>So many I've seen are overly complex and obscure the objective.<br>Thank you for writing well and keeping it simple.
+  </div>
+</div>
+<div class="panel">  
+  <div>Suraj Shrestha <time class="fr citation" datetime="2015-09-15T10:52:34+00:00">15th September, 2015</time></div>
+  <div class="commentItem">
+  This post was a great help to cope the issue I faced.<br>However some issues I'm still facing:<br>I want to post back after the button is clicked i.e. I'm using <br><br><br>Can you please provide me suggestion for the issue I'm facing?<br>Thank you.
+  </div>
+</div>
+<div class="panel">  
+  <div><a href="http://aspxdev.blogspot.com/" class="url fn" style="_blank">Tarun Ghosh</a> <time class="fr citation" datetime="2015-09-16T02:49:58+00:00">16th September, 2015</time></div>
+  <div class="commentItem">
+  I believe the  XMLHttpRequestUpload progress even is called multiple time. How frequently does the event handler function is called and is there any settings through which we can control that?
+  </div>
+</div>
+
+    <form id="commentForm" method="post">
+      <table>
+        <tbody><tr>
+          <td colspan="2"><h4 class="commentformTitle">Leave a Comment</h4><input type="hidden" id="postId" name="postId" value="11"></td>
+        </tr>
+        <tr>
+          <td class="row"><label for="visitorFirstName">First Name</label></td>
+          <td class="row"><input type="text" id="visitorFirstName" name="visitorFirstName" class="short" placeholder="John" required=""></td>
+        </tr>
+        <tr>
+          <td class="row"><label for="visitorLastName">Last Name</label></td>
+          <td class="row"><input type="text" id="visitorLastName" name="visitorLastName" class="short" placeholder="Smith" required=""></td>
+        </tr>
+        <tr>
+          <td class="row"><label for="visitorEmail">Email</label></td>
+          <td class="row">
+            <input type="email" id="visitorEmail" name="visitorEmail" placeholder="jsmith@yahoo.com" required="">
+            &nbsp;
+            <input type="button" id="verifyVisitorBtn" name="verifyVisitorBtn" value="Verify" onclick="verifyVisitor();" style="font-size: 10pt;">
+            <img id="verifyVisitorImg" src="./Html5 File Upload with Progress On Matlus_files/ok.png" alt="Visitor Verified" style="display: none; vertical-align: middle;">
+            <input type="hidden" id="visitorIsVerified" name="visitorIsVerified" value="false">
+          </td>
+        </tr>
+        <tr id="verificationRow" style="display: none;">          
+          <td colspan="2" class="row">
+            <div class="infoMessage">
+            <p>
+            If you've not commented here before, you'll need to verify your email address before you can submit a comment.
+            </p>
+            <ol>
+              <li>Fill in your First and Last Name</li>
+              <li>Fill in your email</li>
+              <li>Click the "Send Verification Email" button</li>
+              <li>You'll receive an email that contains a veryfication code</li>
+              <li>Check you email junk!</li>
+              <li>Enter your verification code in the box below</li>
+              <li>Click the "Validate" button below</li>
+              <li>Continue with filling in your comment</li>
+            </ol>
+            <p>
+              <input type="button" id="verifyEmailBtn" name="verifyEmailBtn" value="Send Verification Email" onclick="sendVerificationEmail();" style="font-size: 10pt;">
+              <img id="verificationEmailSentImg" src="./Html5 File Upload with Progress On Matlus_files/ok.png" alt="Verification Email Sent Confirmation" style="display: none; vertical-align: middle;">&nbsp;
+              <span id="verificationEmailSentMsg" style="display: none;"></span>
+              </p><div id="emailVerificationCodeDiv" style="display: none;">
+              Verification code <input type="text" id="emailVerificationCode" name="emailVerificationCode" style="font-size: 10pt; width: 300px; border-color: #555;">&nbsp;
+              <input type="button" id="verifyBtn" name="verifyBtn" value="Validate" onclick="validateVerificationCode();" style="font-size: 10pt;">
+              <img id="verifiedImg" src="./Html5 File Upload with Progress On Matlus_files/ok.png" alt="Verification Code verified" style="display: none; vertical-align: middle;">
+              </div>
+            <p></p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="row"><label for="visitorWebsite">Website Url</label></td>
+          <td class="row"><input type="url" id="visitorWebsite" name="visitorWebsite" placeholder="http://mydomain.com"></td>
+        </tr>
+        <tr>
+          <td class="row" style="vertical-align: top;"><label for="visitorComment">Your<br>Comment</label></td>
+          <td class="row"><textarea id="visitorComment" name="visitorComment" rows="6" cols="50" required=""></textarea></td>
+        </tr>
+      </tbody></table>
+      <input id="submitBtn" type="submit" value="Submit" disabled="disabled">
+      <span id="submitConfirm" style="display: none;">
+      <img id="submitConfirmImg" src="./Html5 File Upload with Progress On Matlus_files/ok.png" alt="Your Comment has been submitted" style="vertical-align: middle;">
+      Your Comment has been submitted. Thankyou!</span>
+    </form>
+</aside>        
+    </article>  
+</section>
+      </div>
+    </section>
+    <aside>
+      <div id="aside">
+      <div id="recentsAside" class="panel">
+<h2 class="postTitle">Recent Posts</h2>
+<ul>
+<li><a href="http://www.matlus.com/using-localdb-in-visual-studio-online/">Using LocalDB in Visual Studio Online</a></li><li><a href="http://www.matlus.com/azure-startup-tasks-running-as-administrator/">Azure Startup Tasks – Running as Administrator</a></li><li><a href="http://www.matlus.com/installing-msmq-in-an-azure-webrole-instance/">Installing MSMQ in an Azure WebRole instance</a></li><li><a href="http://www.matlus.com/cross-domain-restful-crud-operations-using-jquery/">Cross Domain RESTful CRUD Operations using jQuery</a></li><li><a href="http://www.matlus.com/jquery-data-assigning-objects-to-dynamic-elements/">jQuery.data()–Assigning objects to dynamic elements</a></li><li><a href="http://www.matlus.com/a-generic-restful-crud-httpclient/">A Generic RESTful CRUD HttpClient</a></li><li><a href="http://www.matlus.com/delegatinghandler-for-x-http-method-override/">DelegatingHandler for X-HTTP-Method-Override</a></li><li><a href="http://www.matlus.com/as-net-web-api-supporting-restful-crud-operations/">ASP.NET Web API Supporting RESTful CRUD Operations</a></li><li><a href="http://www.matlus.com/jsonpmediatypeformatter-web-api-jsonp/">JsonpMediaTypeFormatter–Web API JSONP</a></li><li><a href="http://www.matlus.com/httpclient-net-4-5/">HttpClient .NET 4.5</a></li><li><a href="http://www.matlus.com/self-host-asp-net-web-api/">Self Host ASP.NET Web API</a></li>
+</ul>
+</div>
+      <div class="panel"><h2>Tags</h2><a href="http://www.matlus.com/tag/ado-net/" class="tag" style="font-size: 10pt;" title="2 Topics">ADO.NET</a> <a href="http://www.matlus.com/tag/asynchronous/" class="tag" style="font-size: 12pt;" title="3 Topics">Asynchronous</a> <a href="http://www.matlus.com/tag/bindings/" class="tag" style="font-size: 8pt;" title="1 Topics">Bindings</a> <a href="http://www.matlus.com/tag/change-type/" class="tag" style="font-size: 8pt;" title="1 Topics">Change&nbsp;Type</a> <a href="http://www.matlus.com/tag/codegen/" class="tag" style="font-size: 14pt;" title="4 Topics">CodeGen</a> <a href="http://www.matlus.com/tag/data-access/" class="tag" style="font-size: 12pt;" title="3 Topics">Data&nbsp;Access</a> <a href="http://www.matlus.com/tag/database/" class="tag" style="font-size: 8pt;" title="1 Topics">Database</a> <a href="http://www.matlus.com/tag/dbdatareader/" class="tag" style="font-size: 12pt;" title="3 Topics">DbDataReader</a> <a href="http://www.matlus.com/tag/debugging/" class="tag" style="font-size: 10pt;" title="2 Topics">Debugging</a> <a href="http://www.matlus.com/tag/design-pattern/" class="tag" style="font-size: 12pt;" title="3 Topics">Design&nbsp;Pattern</a> <a href="http://www.matlus.com/tag/devices/" class="tag" style="font-size: 8pt;" title="1 Topics">Devices</a> <a href="http://www.matlus.com/tag/factory/" class="tag" style="font-size: 8pt;" title="1 Topics">Factory</a> <a href="http://www.matlus.com/tag/federated-identity/" class="tag" style="font-size: 8pt;" title="1 Topics">Federated&nbsp;Identity</a> <a href="http://www.matlus.com/tag/file-api/" class="tag" style="font-size: 8pt;" title="1 Topics">File&nbsp;API</a> <a href="http://www.matlus.com/tag/file-upload/" class="tag" style="font-size: 8pt;" title="1 Topics">File&nbsp;Upload</a> <a href="http://www.matlus.com/tag/flash/" class="tag" style="font-size: 10pt;" title="2 Topics">Flash</a> <a href="http://www.matlus.com/tag/framework-design/" class="tag" style="font-size: 10pt;" title="2 Topics">Framework&nbsp;Design</a> <a href="http://www.matlus.com/tag/ftp-7-5/" class="tag" style="font-size: 8pt;" title="1 Topics">Ftp&nbsp;7.5</a> <a href="http://www.matlus.com/tag/future/" class="tag" style="font-size: 8pt;" title="1 Topics">Future</a> <a href="http://www.matlus.com/tag/google-tv/" class="tag" style="font-size: 8pt;" title="1 Topics">Google&nbsp;TV</a> <a href="http://www.matlus.com/tag/h-264/" class="tag" style="font-size: 8pt;" title="1 Topics">H.264</a> <a href="http://www.matlus.com/tag/hd-tv/" class="tag" style="font-size: 8pt;" title="1 Topics">HD&nbsp;TV</a> <a href="http://www.matlus.com/tag/html-5/" class="tag" style="font-size: 10pt;" title="2 Topics">Html&nbsp;5</a> <a href="http://www.matlus.com/tag/http/" class="tag" style="font-size: 22pt;" title="8 Topics">Http</a> <a href="http://www.matlus.com/tag/ie9-beta/" class="tag" style="font-size: 8pt;" title="1 Topics">IE9&nbsp;Beta</a> <a href="http://www.matlus.com/tag/iis-7-0/" class="tag" style="font-size: 10pt;" title="2 Topics">IIS&nbsp;7.0</a> <a href="http://www.matlus.com/tag/iis-express/" class="tag" style="font-size: 8pt;" title="1 Topics">IIS&nbsp;Express</a> <a href="http://www.matlus.com/tag/join/" class="tag" style="font-size: 8pt;" title="1 Topics">Join</a> <a href="http://www.matlus.com/tag/json/" class="tag" style="font-size: 22pt;" title="8 Topics">JSON</a> <a href="http://www.matlus.com/tag/linq/" class="tag" style="font-size: 10pt;" title="2 Topics">Linq</a> <a href="http://www.matlus.com/tag/localdb/" class="tag" style="font-size: 8pt;" title="1 Topics">LocalDB</a> <a href="http://www.matlus.com/tag/mobile/" class="tag" style="font-size: 8pt;" title="1 Topics">Mobile</a> <a href="http://www.matlus.com/tag/msmq/" class="tag" style="font-size: 8pt;" title="1 Topics">MSMQ</a> <a href="http://www.matlus.com/tag/mvc/" class="tag" style="font-size: 10pt;" title="2 Topics">MVC</a> <a href="http://www.matlus.com/tag/mvc3/" class="tag" style="font-size: 10pt;" title="2 Topics">MVC3</a> <a href="http://www.matlus.com/tag/oauth/" class="tag" style="font-size: 8pt;" title="1 Topics">OAuth</a> <a href="http://www.matlus.com/tag/ogg/" class="tag" style="font-size: 8pt;" title="1 Topics">Ogg</a> <a href="http://www.matlus.com/tag/open-id/" class="tag" style="font-size: 8pt;" title="1 Topics">Open&nbsp;Id</a> <a href="http://www.matlus.com/tag/orion/" class="tag" style="font-size: 10pt;" title="2 Topics">Orion</a> <a href="http://www.matlus.com/tag/parrallel/" class="tag" style="font-size: 8pt;" title="1 Topics">Parrallel</a> <a href="http://www.matlus.com/tag/parsing-html/" class="tag" style="font-size: 8pt;" title="1 Topics">Parsing&nbsp;Html</a> <a href="http://www.matlus.com/tag/performance/" class="tag" style="font-size: 28pt;" title="11 Topics">Performance</a> <a href="http://www.matlus.com/tag/plinq/" class="tag" style="font-size: 8pt;" title="1 Topics">Plinq</a> <a href="http://www.matlus.com/tag/poster/" class="tag" style="font-size: 8pt;" title="1 Topics">Poster</a> <a href="http://www.matlus.com/tag/proxy/" class="tag" style="font-size: 8pt;" title="1 Topics">Proxy</a> <a href="http://www.matlus.com/tag/pseudo-streaming/" class="tag" style="font-size: 8pt;" title="1 Topics">Pseudo&nbsp;Streaming</a> <a href="http://www.matlus.com/tag/quartz-for-asp-net/" class="tag" style="font-size: 14pt;" title="4 Topics">Quartz&nbsp;for&nbsp;ASP.NET</a> <a href="http://www.matlus.com/tag/razor/" class="tag" style="font-size: 10pt;" title="2 Topics">Razor</a> <a href="http://www.matlus.com/tag/razor-host/" class="tag" style="font-size: 8pt;" title="1 Topics">Razor&nbsp;Host</a> <a href="http://www.matlus.com/tag/rest/" class="tag" style="font-size: 26pt;" title="10 Topics">REST</a> <a href="http://www.matlus.com/tag/roslyn/" class="tag" style="font-size: 8pt;" title="1 Topics">Roslyn</a> <a href="http://www.matlus.com/tag/selectmany/" class="tag" style="font-size: 8pt;" title="1 Topics">SelectMany</a> <a href="http://www.matlus.com/tag/snippet/" class="tag" style="font-size: 8pt;" title="1 Topics">Snippet</a> <a href="http://www.matlus.com/tag/startup-tasks/" class="tag" style="font-size: 8pt;" title="1 Topics">StartUp&nbsp;Tasks</a> <a href="http://www.matlus.com/tag/templating-engine/" class="tag" style="font-size: 8pt;" title="1 Topics">Templating&nbsp;Engine</a> <a href="http://www.matlus.com/tag/tfs/" class="tag" style="font-size: 8pt;" title="1 Topics">TFS</a> <a href="http://www.matlus.com/tag/threading/" class="tag" style="font-size: 8pt;" title="1 Topics">Threading</a> <a href="http://www.matlus.com/tag/typeconverter/" class="tag" style="font-size: 8pt;" title="1 Topics">TypeConverter</a> <a href="http://www.matlus.com/tag/video/" class="tag" style="font-size: 8pt;" title="1 Topics">Video</a> <a href="http://www.matlus.com/tag/wcf/" class="tag" style="font-size: 8pt;" title="1 Topics">WCF</a> <a href="http://www.matlus.com/tag/web-api/" class="tag" style="font-size: 22pt;" title="8 Topics">Web&nbsp;API</a> <a href="http://www.matlus.com/tag/webforms/" class="tag" style="font-size: 8pt;" title="1 Topics">WebForms</a> <a href="http://www.matlus.com/tag/webm/" class="tag" style="font-size: 8pt;" title="1 Topics">WebM</a> <a href="http://www.matlus.com/tag/windows-services/" class="tag" style="font-size: 8pt;" title="1 Topics">Windows&nbsp;Services</a> <a href="http://www.matlus.com/tag/wmi/" class="tag" style="font-size: 8pt;" title="1 Topics">WMI</a> <a href="http://www.matlus.com/tag/xmlhttprequest/" class="tag" style="font-size: 8pt;" title="1 Topics">XMLHttpRequest</a> </div>
+      <div class="panel customGroupCloud"><h2>Open Source Projects</h2><ul><li><a href="http://www.matlus.com/opensource/mit-license/">MIT License</a></li></ul></div><div class="panel customGroupCloud"><h2>Code Gems</h2><ul><li><a href="http://www.matlus.com/codegem/snippets/">Snippets</a></li></ul></div>
+      </div>
+      <div class="cl"></div>
+    </aside>
+  </div>
+  <footer>
+    <div id="footer">
+    <div id="footerContent">©2010-2015 Matlus – Internet Technology &amp; Software Engineering.<br><br>Power By<br><a href="http://www.matlus.com/quartz-for-aspnet/"><img src="./Html5 File Upload with Progress On Matlus_files/QuartzLogo.png" width="150px" height="57px" style="vertical-align:text-top;" alt="Quartz for ASP.NET"></a></div>
+    </div>
+  </footer>
+  <script src="./Html5 File Upload with Progress On Matlus_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="./Html5 File Upload with Progress On Matlus_files/ga.js"></script><script type="text/javascript">
+    var homeUrl = '/';
+    var imagesFolder = '/content/images/';
+  </script>  
+  <script type="text/javascript" src="./Html5 File Upload with Progress On Matlus_files/matlus.custom.js"></script>
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-831293-3']);
+    _gaq.push(['_setDomainName', '.matlus.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();    
+  </script>
+  <script type="text/javascript" src="./Html5 File Upload with Progress On Matlus_files/plusone.js" gapi_processed="true"></script>
+  
+
+</body></html>
